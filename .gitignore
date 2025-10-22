@@ -1,0 +1,10 @@
+# os /editor
+.DS_Store
+Thums.db
+.vscode/
+.idea/
+
+# build artifacts
+/build/
+dist/
+*.log

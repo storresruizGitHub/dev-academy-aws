@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Instalando dependencias..."
+      - yum -y install jq || True
+  build:
+    commands:
+      - echo "Validando plantilla CloudFormation..."
+      - aws cloudformation validate-template --template-body file://templates/lab-s3-group-policy.yaml
+      - aws cloudformation validate-template --template-body file://templates/lab-aws-github.yaml
+      - echo "Plantillas validadas correctamente."
+artifacts:
+  files:
+    - templates/*.yaml

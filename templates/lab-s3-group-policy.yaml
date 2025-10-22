@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Crea un bucket S3 y un grupo IAM.
+Resources:
+  MyBucketSergiot:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "multi-devacademy-${AWS::AccountId}-lab"
+  MyGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: DevAcademyGroup
+ 
+  MyPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: DevAcademyS3Access
+      Groups:
+        - !Ref MyGroup
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+              - s3:GetObject
+              - s3:PutObject
+            Resource:
+              - !GetAtt MyBucketSergiot.Arn
+              - !Sub "${MyBucketSergiot.Arn}/*"
+ 
+Outputs:
+  BucketName:
+    Value: !Ref MyBucketSergiot
+  GroupName:
+    Value: !Ref MyGroup
+  PolicyName:
+    Value: !Ref MyPolicy
