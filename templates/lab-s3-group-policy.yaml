@@ -16,7 +16,8 @@ Resources:
     DependsOn: MyGroup
     Properties:
       PolicyName: DevAcademyBucketAccess
-      Groups: [ !Ref MyGroup ]
+      Groups: 
+        - !Ref MyGroup
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -26,11 +27,16 @@ Resources:
             Resource:
               - !Sub "arn:aws:s3:::lab-${AWS::AccountId}-personal"
           - Effect: Allow
-            Action: [  s3:GetObject, s3:PutObject ]
+            Action: 
+              - s3:GetObject
+              - s3:PutObject
             Resource:
               - !Sub "arn:aws:s3:::lab-${AWS::AccountId}-personal/*"              
  
 Outputs:
-  BucketName: { Value: !Ref MyBucket }
-  GroupName:  { Value: !Ref MyGroup }
-  PolicyName: { Value: !Ref MyPolicy }
+  BucketName: 
+    Value: !Ref MyBucket
+  GroupName:  
+    Value: !Ref MyGroup
+  PolicyName: 
+    Value: !Ref MyPolicy
