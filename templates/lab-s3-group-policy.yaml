@@ -1,38 +1,32 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: >
-  Crea un bucket S3 y un grupo IAM.
+Description: Bucket + Group + Policy (permiso RW al bucket)
 Resources:
-  MyBucketSergiot:
+  MyBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "multi-devacademy-${AWS::AccountId}-lab"
+      BucketName: !Sub "lab-${AWS::AccountId}-personal"
+ 
   MyGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: DevAcademyGroup
+      GroupName: DevAcademyLabGroup
  
   MyPolicy:
     Type: AWS::IAM::Policy
+    DependsOn: MyGroup
     Properties:
-      PolicyName: DevAcademyS3Access
-      Groups:
-        - !Ref MyGroup
+      PolicyName: DevAcademyBucketAccess
+      Groups: [ !Ref MyGroup ]
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
-            Action:
-              - s3:ListBucket
-              - s3:GetObject
-              - s3:PutObject
+            Action: [ s3:ListBucket, s3:GetObject, s3:PutObject ]
             Resource:
-              - !GetAtt MyBucketSergiot.Arn
-              - !Sub "${MyBucketSergiot.Arn}/*"
+              - !Sub "arn:aws:s3:::lab-${AWS::AccountId}-personal"
+              - !Sub "arn:aws:s3:::lab-${AWS::AccountId}-personal/*"
  
 Outputs:
-  BucketName:
-    Value: !Ref MyBucketSergiot
-  GroupName:
-    Value: !Ref MyGroup
-  PolicyName:
-    Value: !Ref MyPolicy
+  BucketName: { Value: !Ref MyBucket }
+  GroupName:  { Value: !Ref MyGroup }
+  PolicyName: { Value: !Ref MyPolicy }
