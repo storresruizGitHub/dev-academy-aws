@@ -1,15 +1,36 @@
 version: 0.2
+
 phases:
   install:
+    runtime-versions:
+      python: 3.9
     commands:
-      - echo "Instalando dependencias..."
-      - yum -y install jq || True
+      - echo Installing Terraform
+      - wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+      - unzip terraform_1.6.0_linux_amd64.zip
+      - mv terraform /usr/local/bin/
+      - terraform --version
+  
+  pre_build:
+    commands:
+      - echo Initializing Terraform
+      - cd terraform
+      - terraform init
+      - terraform validate
+  
   build:
     commands:
-      - echo "Validando plantilla CloudFormation..."
-      - aws cloudformation validate-template --template-body file://templates/lab-s3-group-policy.yaml
-      - aws cloudformation validate-template --template-body file://templates/lab-aws-github.yaml
-      - echo "Plantillas validadas correctamente."
+      - echo Planning Terraform deployment
+      - terraform plan -out=tfplan
+      - echo Applying Terraform deployment
+      - terraform apply -auto-approve tfplan
+  
+  post_build:
+    commands:
+      - echo Terraform deployment completed
+      - terraform output
+
 artifacts:
   files:
-    - templates/*.yaml
+    - terraform/terraform.tfstate
+    - terraform/tfplan
